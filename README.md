@@ -1,6 +1,6 @@
 # DeepLab-V1-PyTorch
 
-code for 2015 ICLR deeplab-v1 paper ["Semantic Image Segmentation with Deep Convolutional Nets and Fully Connected CRFs"](http://arxiv.org/pdf/1412.7062.pdf)
+Code for ICLR 2015 deeplab-v1 paper ["Semantic Image Segmentation with Deep Convolutional Nets and Fully Connected CRFs"](http://arxiv.org/pdf/1412.7062.pdf), backbone is deeplab-largeFOV.
 
 ## Config
 - python 3.7 / pytorch 1.2.0
@@ -11,7 +11,7 @@ code for 2015 ICLR deeplab-v1 paper ["Semantic Image Segmentation with Deep Conv
 - [Pascal VOC 2012 Dataset](http://host.robots.ox.ac.uk/pascal/VOC/voc2012/)
     - extract 'VOCtrainval_11-May-2012.tar' to 'VOCdevkit/'
 - [Pascal VOC 2012 Augment Dataset](https://github.com/shelhamer/fcn.berkeleyvision.org/tree/master/data/pascal)
-    - I have download it, 'data/SegmentationClassAug.zip'
+    - I have download it, 'VOCdevkit/SegmentationClassAug.zip'
 
 Finally, it should like this
 ```
@@ -40,7 +40,7 @@ Finally, it should like this
     <tr>
         <td rowspan="4">
             <i>trainaug</i><br>
-            (<a href='https://drive.google.com/file/d/1FaW2Sp7Jj3eaoyZtbabM1IWZnuScN-u6/view?usp=sharing'>Model</a>)
+            (<a href='./exp/model_last_6000.pth'>Model</a>)
         </td>
         <td rowspan="4"><i>val</i></td>
         <td rowspan="2"></td>
@@ -77,17 +77,17 @@ Finally, it should like this
 ## Usage
 ### Train
 ```
-CUDA_VISIBLE_DEVICES=0 python main.py --type=train
+python main.py --type=train
 ```
 ### Test
 without CRF
 ```
-CUDA_VISIBLE_DEVICES=0 python main.py --type=test
+python main.py --type=test
 ```
 
 with CRF
 ```
-CUDA_VISIBLE_DEVICES=0 python main.py --type=test --use_crf
+python main.py --type=test --use_crf
 ```
 
 ### Evaluate
@@ -101,4 +101,5 @@ python evalate.py
 [Project](http://liangchiehchen.com/projects/DeepLab.html) /
 [Code](https://bitbucket.org/aquariusjay/deeplab-public-ver2) / [arXiv
 paper](http://arxiv.org/pdf/1412.7062.pdf)
+
 2.[deeplab-v2-pytorch](https://github.com/kazuto1011/deeplab-pytorch)
