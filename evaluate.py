@@ -34,7 +34,7 @@ class IOUMetric:
 
 if __name__ == '__main__':
     mIOU = IOUMetric(num_classes=21)
-    root_dir = '/home/wanglei/datasets/VOCdevkit/VOC2012/'
+    root_dir = './VOCdevkit/VOC2012/'
 
     pred_dir = './exp/labels'
     gt_dir = root_dir + 'SegmentationClass/'
@@ -73,8 +73,3 @@ if __name__ == '__main__':
     acc, acc_cls, iou, miou, fwavacc = mIOU.evaluate()
     print(acc, acc_cls, iou, miou, fwavacc)
     print('mIOU = %s, time = %s s' % (miou, str(time.time() - st)))
-
-    # for i in range(21):
-    #     print(classes[i], iou[i])
-
-    print('*' * 50)

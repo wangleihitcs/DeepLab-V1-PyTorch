@@ -11,7 +11,7 @@ Code for ICLR 2015 deeplab-v1 paper ["Semantic Image Segmentation with Deep Conv
 - [Pascal VOC 2012 Dataset](http://host.robots.ox.ac.uk/pascal/VOC/voc2012/)
     - extract 'VOCtrainval_11-May-2012.tar' to 'VOCdevkit/'
 - [Pascal VOC 2012 Augment Dataset](https://github.com/shelhamer/fcn.berkeleyvision.org/tree/master/data/pascal)
-    - I have download it, 'VOCdevkit/SegmentationClassAug.zip'
+    - I have download it, 'VOCdevkit/SegmentationClassAug.zip', you show extract it to 'VOCdevkit/VOC2012/
 
 Finally, it should like this
 ```
@@ -67,10 +67,10 @@ Finally, it should like this
     </tr>
     <tr>
         <td>Ours</td>
-        <td>92.13</td>
-        <td>80.82</td>
-        <td><strong>67.37</strong></td>
-        <td>86.26</td>
+        <td>92.23</td>
+        <td>79.99</td>
+        <td><strong>67.58</strong></td>
+        <td>86.32</td>
     </tr>
 </table>
 
@@ -102,4 +102,4 @@ python evalate.py
 [Code](https://bitbucket.org/aquariusjay/deeplab-public-ver2) / [arXiv
 paper](http://arxiv.org/pdf/1412.7062.pdf)
 
-2.[deeplab-v2-pytorch](https://github.com/kazuto1011/deeplab-pytorch)
+2. [deeplab-v2-pytorch](https://github.com/kazuto1011/deeplab-pytorch)

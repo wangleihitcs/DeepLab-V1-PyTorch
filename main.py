@@ -24,7 +24,7 @@ num_print_iters = 20
 init_model_path = './data/deeplab_largeFOV.pth'
 log_path = './exp/log.txt'
 model_path_save = './exp/model_last_'
-root_dir_path = '/home/wanglei/datasets/VOCdevkit/VOC2012'
+root_dir_path = './VOCdevkit/VOC2012'
 pred_dir_path = './exp/labels/'
 
 def get_params(model, key):

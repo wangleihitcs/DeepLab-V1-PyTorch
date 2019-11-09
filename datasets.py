@@ -8,7 +8,7 @@ import random
 
 class VOCDataset(torch.utils.data.Dataset):
     def __init__(self, split='train_aug', crop_size=321):
-        self.root = '/home/wanglei/datasets/VOCdevkit/VOC2012/'
+        self.root = './VOCdevkit/VOC2012/'
         self.ann_dir_path = os.path.join(self.root, 'Annotations')
         self.image_dir_path = os.path.join(self.root, 'JPEGImages')
         self.label_dir_path = os.path.join(self.root, 'SegmentationClassAug')
