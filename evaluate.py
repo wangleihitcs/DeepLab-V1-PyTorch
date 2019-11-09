@@ -34,11 +34,11 @@ class IOUMetric:
 
 if __name__ == '__main__':
     mIOU = IOUMetric(num_classes=21)
-    root_dir = '/home/wanglei/datasets/VOCdevkit/'
+    root_dir = '/home/wanglei/datasets/VOCdevkit/VOC2012/'
 
     pred_dir = './exp/labels'
-    gt_dir = root_dir + 'VOC2012/SegmentationClass/'
-    ids = [i.strip() for i in open(root_dir + 'VOC2012//ImageSets/Segmentation/val.txt') if not i.strip() == '']
+    gt_dir = root_dir + 'SegmentationClass/'
+    ids = [i.strip() for i in open(root_dir + 'ImageSets/Segmentation/val.txt') if not i.strip() == '']
 
     classes = np.array(('background',  # always index 0
                'aeroplane', 'bicycle', 'bird', 'boat',

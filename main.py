@@ -20,10 +20,12 @@ lr = 1e-3
 weight_decay = 5e-4
 num_max_iters = 6000
 num_update_iters = 4000
-num_print_iters = 100
+num_print_iters = 20
 init_model_path = './data/deeplab_largeFOV.pth'
 log_path = './exp/log.txt'
 model_path_save = './exp/model_last_'
+root_dir_path = '/home/wanglei/datasets/VOCdevkit/VOC2012'
+pred_dir_path = './exp/labels/'
 
 def get_params(model, key):
     if key == '1x':
@@ -92,7 +94,6 @@ def train():
     print('Start train...')
     iters = 0
     log_file = open(log_path, 'w')
-    softmax = nn.Softmax(dim = 1)
     loss_iters, accuracy_iters = [], []
     for epoch in range(1, 100):
         for iter_id, batch in enumerate(train_loader):
@@ -114,10 +115,10 @@ def train():
                 loss_iters.clear()
                 accuracy_iters.clear()
             
-            if iters % 1000 == 0:
+            if iters == num_max_iters:
                 torch.save(model.state_dict(), model_path_save + str(iters) + '.pth')
             
-            if iters == 4000 or iters == 5000:
+            if iters == num_update_iters or iters == num_update_iters + 1000:
                 for group in optimizer.param_groups:
                     group["lr"] *= 0.1
             
@@ -147,12 +148,12 @@ def test(model_path_test, use_crf):
         iter_max=10,    # 10
         pos_xy_std=3,   # 3
         pos_w=3,        # 3
-        bi_xy_std=140,  # 121, 140
+        bi_xy_std=121,  # 121, 140
         bi_rgb_std=5,   # 5, 5
-        bi_w=5,         # 4, 5
+        bi_w=4,         # 4, 5
     )
 
-    img_dir_path = '/home/wanglei/datasets/VOCdevkit/VOC2012/JPEGImages/'
+    img_dir_path = root_dir_path + '/JPEGImages/'
     # class palette for test
     palette = []
     for i in range(256):
@@ -181,7 +182,7 @@ def test(model_path_test, use_crf):
     times = 0.0
     index = 0
     for iter_id, batch in enumerate(val_loader):
-        image_ids, images, labels, _ = batch
+        image_ids, images, labels = batch
         images = images.to(device)
         labels = labels.to(device)
         logits = model(images)
@@ -213,7 +214,7 @@ def test(model_path_test, use_crf):
                 output = np.array(outputs[i].cpu(), dtype=np.uint8)
                 img_label = Image.fromarray(output)
             img_label.putpalette(palette)
-            img_label.save('./exp/labels/' + image_ids[i] + '.png')
+            img_label.save(pred_dir_path + image_ids[i] + '.png')
 
             accuracy = float(torch.eq(outputs[i], labels[i]).sum().cpu()) / (logits.shape[2] * logits.shape[3])
             index += 1
@@ -226,7 +227,7 @@ def test(model_path_test, use_crf):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--type', default='test', help='train or test model')
-    parser.add_argument('--model_path_test', default='./exp/model_last_9000.pth', help='test model path')
+    parser.add_argument('--model_path_test', default='./exp/model_last_6000.pth', help='test model path')
     parser.add_argument('--use_crf', default=False, action='store_true', help='use crf or not')
     args = parser.parse_args()
 
