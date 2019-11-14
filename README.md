@@ -12,7 +12,6 @@ Code for ICLR 2015 deeplab-v1 paper ["Semantic Image Segmentation with Deep Conv
     - extract 'VOCtrainval_11-May-2012.tar' to 'VOCdevkit/'
 - [Pascal VOC 2012 Augment Dataset](https://github.com/shelhamer/fcn.berkeleyvision.org/tree/master/data/pascal)
     - I have download it, 'VOCdevkit/SegmentationClassAug.zip', you show extract it to 'VOCdevkit/VOC2012/
-
 Finally, it should like this
 ```
 /VOCdevkit
@@ -73,6 +72,7 @@ Finally, it should like this
         <td>86.32</td>
     </tr>
 </table>
+e.g. We use ImageNet-1000 to train a classification task for backbone DeepLab-LargeFOV（VGG16）。
 
 ## Usage
 ### Train
