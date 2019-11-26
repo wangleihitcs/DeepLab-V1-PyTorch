@@ -25,6 +25,7 @@ Finally, it should like this
 ```
 
 ## Performance
+### Compore with paper
 <table>
     <tr>
         <th>Train set</th>
@@ -73,6 +74,55 @@ Finally, it should like this
     </tr>
 </table>
 e.g. We use ImageNet-1000 to train a classification task for backbone DeepLab-LargeFOV（VGG16）。
+
+### Learning rate policy
+<table>
+    <tr>
+        <th>Train set</th>
+        <th>Eval set</th>
+        <th>CRF?</th>
+        <th>Code</th>
+        <th>Pixel<br>Accuracy</th>
+        <th>Mean<br>Accuracy</th>
+        <th>Mean IoU</th>
+        <th>FreqW IoU</th>
+    </tr>
+    <tr>
+        <td rowspan="4">
+            <i>trainaug</i>
+        </td>
+        <td rowspan="4"><i>val</i></td>
+        <td rowspan="2"></td>
+        <td>Ours-step</td>
+        <td>90.20</td>
+        <td>80.92</td>
+        <td><strong>62.34</td>
+        <td>83.58</td>
+    </tr>
+    <tr>
+        <td>Ours-poly</td>
+        <td>91.24</td>
+        <td>80.29</td>
+        <td><strong>64.838</td>
+        <td>85.00</td>
+    </tr>
+    <tr>
+        <td rowspan="2">&#10003;</td>
+        <td>Ours-step</td>
+        <td>92.23</td>
+        <td>79.99</td>
+        <td><strong>67.58</strong></td>
+        <td>86.32</td>
+    </tr>
+    <tr>
+        <td>Ours-poly</td>
+        <td>92.65</td>
+        <td>79.92</td>
+        <td><strong>68.72</strong></td>
+        <td>86.98</td>
+    </tr>
+</table>
+e.g. The learning rate policy of "step" and "poly", mentioned by [deeplab v2](http://arxiv.org/pdf/1606.00915.pdf).
 
 ## Usage
 ### Train
