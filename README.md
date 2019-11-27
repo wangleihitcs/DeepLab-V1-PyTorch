@@ -40,7 +40,6 @@ Finally, it should like this
     <tr>
         <td rowspan="4">
             <i>trainaug</i><br>
-            (<a href='./exp/model_last_6000.pth'>Model</a>)
         </td>
         <td rowspan="4"><i>val</i></td>
         <td rowspan="2"></td>

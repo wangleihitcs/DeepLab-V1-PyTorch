@@ -7,11 +7,11 @@ import cv2
 import random
 
 class VOCDataset(torch.utils.data.Dataset):
-    def __init__(self, split='train_aug', crop_size=321):
-        self.root = './VOCdevkit/VOC2012/'
+    def __init__(self, split='train_aug', crop_size=321, label_dir_path='SegmentationClassAug'):
+        self.root = '/home/ubuntu/workshops/datasets/voc12/VOCdevkit/VOC2012/'
         self.ann_dir_path = os.path.join(self.root, 'Annotations')
         self.image_dir_path = os.path.join(self.root, 'JPEGImages')
-        self.label_dir_path = os.path.join(self.root, 'SegmentationClassAug')
+        self.label_dir_path = os.path.join(self.root, label_dir_path) # SegmentationClassAug_Round1
         self.id_path = os.path.join('./list', split + '.txt')
 
         self.image_ids = [i.strip() for i in open(self.id_path) if not i.strip() == ' ']
@@ -24,6 +24,7 @@ class VOCDataset(torch.utils.data.Dataset):
         self.base_size = None
         self.scales = [0.5, 0.75, 1.0, 1.25, 1.5]
         self.is_augment = True
+        self.is_scale = True
         self.is_flip = True
     
     def __len__(self):
@@ -45,6 +46,20 @@ class VOCDataset(torch.utils.data.Dataset):
         return image_id, image.astype(np.float32), label.astype(np.int64)
     
     def _augmentation(self, image, label):
+        # Scaling
+        # if self.split.__contains__('train') and self.is_scale:
+        #     h, w = label.shape
+        #     if self.base_size:
+        #         if h > w:
+        #             h, w = (self.base_size, int(self.base_size * w / h))
+        #         else:
+        #             h, w = (int(self.base_size * h / w), self.base_size)
+        #     scale_factor = random.choice(self.scales)
+        #     h, w = (int(h * scale_factor), int(w * scale_factor))
+        #     image = cv2.resize(image, (w, h), interpolation=cv2.INTER_LINEAR)
+        #     label = Image.fromarray(label).resize((w, h), resample=Image.NEAREST)
+        #     label = np.asarray(label, dtype=np.int64)
+
         # Padding to fit for crop_size
         h, w = label.shape
         pad_h = max(self.crop_size - h, 0)

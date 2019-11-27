@@ -15,11 +15,12 @@ from utils import crf, losses
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 device_ids = [0]
 
-batch_size = 30
+batch_size = 10 # 30 for "step", 10 for 'poly'
 lr = 1e-3
 weight_decay = 5e-4
-num_max_iters = 6000
+num_max_iters = 6000 # 6000 for "step", 20000 for 'poly'
 num_update_iters = 4000
+num_save_iters = 2000
 num_print_iters = 20
 init_model_path = './data/deeplab_largeFOV.pth'
 log_path = './exp/log.txt'
@@ -91,6 +92,10 @@ def train():
         drop_last=True
     )
 
+    # Learning rate policy
+    for group in optimizer.param_groups:
+        group.setdefault('initial_lr', group['lr'])
+
     print('Start train...')
     iters = 0
     log_file = open(log_path, 'w')
@@ -110,24 +115,29 @@ def train():
                 cur_time = strftime("%Y-%m-%d %H:%M:%S", localtime())
                 log_str = 'iters:{:4}, loss:{:6,.4f}, accuracy:{:5,.4}'.format(iters, np.mean(loss_iters), np.mean(accuracy_iters))
                 print(log_str)
-                log_file.write(cur_time + log_str + '\n')
+                log_file.write(cur_time + ' ' + log_str + '\n')
                 log_file.flush()
-                loss_iters.clear()
-                accuracy_iters.clear()
+                loss_iters = []
+                accuracy_iters = []
             
-            if iters == num_max_iters:
+            if iters % num_save_iters == 0:
                 torch.save(model.state_dict(), model_path_save + str(iters) + '.pth')
             
+            # step
             if iters == num_update_iters or iters == num_update_iters + 1000:
                 for group in optimizer.param_groups:
                     group["lr"] *= 0.1
             
+            # poly
+            # for group in optimizer.param_groups:
+            #     group["lr"] = group['initial_lr'] * (1 - float(iters) / num_max_iters) ** 0.9
+
             if iters == num_max_iters:
                 exit()
 
 
 def test(model_path_test, use_crf):
-    batch_size = 1
+    batch_size = 2
     is_post_process = use_crf
     crop_size = 513
     model = vgg.VGG16_LargeFOV(input_size=crop_size, split='test')
@@ -136,10 +146,10 @@ def test(model_path_test, use_crf):
     model.eval()
     model = model.to(device)
     val_loader = torch.utils.data.DataLoader(
-        VOCDataset(split='val', crop_size=crop_size),
+        VOCDataset(split='val', crop_size=crop_size, label_dir_path='SegmentationClassAug'),
         batch_size=batch_size,
         shuffle=False,
-        num_workers=2,
+        num_workers=4,
         drop_last=False
     )
 
@@ -148,9 +158,9 @@ def test(model_path_test, use_crf):
         iter_max=10,    # 10
         pos_xy_std=3,   # 3
         pos_w=3,        # 3
-        bi_xy_std=121,  # 121, 140
+        bi_xy_std=140,  # 121, 140
         bi_rgb_std=5,   # 5, 5
-        bi_w=4,         # 4, 5
+        bi_w=5,         # 4, 5
     )
 
     img_dir_path = root_dir_path + '/JPEGImages/'
@@ -181,15 +191,22 @@ def test(model_path_test, use_crf):
                             [0, 64, 128]], dtype='uint8').flatten()
     times = 0.0
     index = 0
+    loss_iters, accuracy_iters = [], []
+    CEL = nn.CrossEntropyLoss(ignore_index=255).to(device)
     for iter_id, batch in enumerate(val_loader):
         image_ids, images, labels = batch
         images = images.to(device)
-        labels = labels.to(device)
+        labels = losses.resize_labels(labels, size=(crop_size, crop_size)).to(device)
         logits = model(images)
         probs = nn.functional.softmax(logits, dim=1) # shape = [batch_size, C, H, W]
 
         outputs = torch.argmax(probs, dim=1) # shape = [batch_size, H, W]
         
+        loss_seg = CEL(logits, labels)
+        accuracy = float(torch.eq(outputs, labels).sum().cpu()) / (len(image_ids) * logits.shape[2] * logits.shape[3])
+        loss_iters.append(float(loss_seg.cpu()))
+        accuracy_iters.append(float(accuracy))
+
         for i in range(len(image_ids)):
             if is_post_process:
                 raw_image = cv2.imread(img_dir_path + image_ids[i] + '.jpg', cv2.IMREAD_COLOR) # shape = [H, W, 3]
@@ -222,12 +239,13 @@ def test(model_path_test, use_crf):
                 print(image_ids[i], float('%.4f' % accuracy), index)
     if is_post_process:
         print('dense crf time = %s' % (times / index))
+    print('val loss = %s, acc = %s' % (np.mean(loss_iters), np.mean(accuracy_iters)))
     print(model_path_test)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--type', default='test', help='train or test model')
-    parser.add_argument('--model_path_test', default='./exp/model_last_6000.pth', help='test model path')
+    parser.add_argument('--model_path_test', default='./exp/model_last_20000.pth', help='test model path')
     parser.add_argument('--use_crf', default=False, action='store_true', help='use crf or not')
     args = parser.parse_args()
 
