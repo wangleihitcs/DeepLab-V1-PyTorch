@@ -87,11 +87,11 @@ e.g. We use ImageNet-1000 to train a classification task for backbone DeepLab-La
         <th>FreqW IoU</th>
     </tr>
     <tr>
-        <td rowspan="4">
+        <td rowspan="6">
             <i>trainaug</i>
         </td>
-        <td rowspan="4"><i>val</i></td>
-        <td rowspan="2"></td>
+        <td rowspan="6"><i>val</i></td>
+        <td rowspan="3"></td>
         <td>Ours-step</td>
         <td>90.20</td>
         <td>80.92</td>
@@ -113,7 +113,7 @@ e.g. We use ImageNet-1000 to train a classification task for backbone DeepLab-La
         <td>85.26</td>
     </tr>
     <tr>
-        <td rowspan="2">&#10003;</td>
+        <td rowspan="3">&#10003;</td>
         <td>Ours-step</td>
         <td>92.23</td>
         <td>79.99</td>
