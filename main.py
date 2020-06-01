@@ -15,13 +15,13 @@ from utils import crf, losses
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 device_ids = [0]
 
-batch_size = 10 # 30 for "step", 10 for 'poly'
+batch_size = 30 # 30 for "step", 10 for 'poly'
 lr = 1e-3
 weight_decay = 5e-4
-num_max_iters = 6000 # 6000 for "step", 20000 for 'poly'
-num_update_iters = 4000
-num_save_iters = 2000
-num_print_iters = 20
+num_max_iters = 20000 # 6000 for "step", 20000 for 'poly'
+num_update_iters = 10 # 4000 for "step", 10 for 'poly'
+num_save_iters = 1000
+num_print_iters = 100
 init_model_path = './data/deeplab_largeFOV.pth'
 log_path = './exp/log.txt'
 model_path_save = './exp/model_last_'
@@ -82,10 +82,12 @@ def train():
         ],
         momentum = 0.9,
     )
+    # optimizer = torch.optim.SGD(params=model.parameters(), lr=lr, momentum=0.9, weight_decay=weight_decay) # for val mIoU = 69.6
 
     print('Set data...')
     train_loader = torch.utils.data.DataLoader(
-        VOCDataset(split='train_aug', crop_size=321),
+        VOCDataset(split='train_aug', crop_size=321, is_scale=False, is_flip=True),
+        # VOCDataset(split='train_aug', crop_size=321, is_scale=True, is_flip=True), # for val mIoU = 69.6
         batch_size=batch_size,
         shuffle=True,
         num_workers=4,
@@ -124,13 +126,13 @@ def train():
                 torch.save(model.state_dict(), model_path_save + str(iters) + '.pth')
             
             # step
-            if iters == num_update_iters or iters == num_update_iters + 1000:
-                for group in optimizer.param_groups:
-                    group["lr"] *= 0.1
+            # if iters == num_update_iters or iters == num_update_iters + 1000:
+            #     for group in optimizer.param_groups:
+            #         group["lr"] *= 0.1
             
             # poly
-            # for group in optimizer.param_groups:
-            #     group["lr"] = group['initial_lr'] * (1 - float(iters) / num_max_iters) ** 0.9
+            for group in optimizer.param_groups:
+                group["lr"] = group['initial_lr'] * (1 - float(iters) / num_max_iters) ** 0.9
 
             if iters == num_max_iters:
                 exit()
@@ -146,7 +148,7 @@ def test(model_path_test, use_crf):
     model.eval()
     model = model.to(device)
     val_loader = torch.utils.data.DataLoader(
-        VOCDataset(split='val', crop_size=crop_size, label_dir_path='SegmentationClassAug'),
+        VOCDataset(split='val', crop_size=crop_size, label_dir_path='SegmentationClassAug', is_scale=False, is_flip=False),
         batch_size=batch_size,
         shuffle=False,
         num_workers=4,

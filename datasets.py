@@ -7,7 +7,7 @@ import cv2
 import random
 
 class VOCDataset(torch.utils.data.Dataset):
-    def __init__(self, split='train_aug', crop_size=321, label_dir_path='SegmentationClassAug'):
+    def __init__(self, split='train_aug', crop_size=321, label_dir_path='SegmentationClassAug', is_scale=True, is_flip=True):
         self.root = '/home/ubuntu/workshops/datasets/voc12/VOCdevkit/VOC2012/'
         self.ann_dir_path = os.path.join(self.root, 'Annotations')
         self.image_dir_path = os.path.join(self.root, 'JPEGImages')
@@ -24,8 +24,8 @@ class VOCDataset(torch.utils.data.Dataset):
         self.base_size = None
         self.scales = [0.5, 0.75, 1.0, 1.25, 1.5]
         self.is_augment = True
-        self.is_scale = True
-        self.is_flip = True
+        self.is_scale = is_scale
+        self.is_flip = is_flip
     
     def __len__(self):
         return len(self.image_ids)
@@ -47,18 +47,18 @@ class VOCDataset(torch.utils.data.Dataset):
     
     def _augmentation(self, image, label):
         # Scaling
-        # if self.split.__contains__('train') and self.is_scale:
-        #     h, w = label.shape
-        #     if self.base_size:
-        #         if h > w:
-        #             h, w = (self.base_size, int(self.base_size * w / h))
-        #         else:
-        #             h, w = (int(self.base_size * h / w), self.base_size)
-        #     scale_factor = random.choice(self.scales)
-        #     h, w = (int(h * scale_factor), int(w * scale_factor))
-        #     image = cv2.resize(image, (w, h), interpolation=cv2.INTER_LINEAR)
-        #     label = Image.fromarray(label).resize((w, h), resample=Image.NEAREST)
-        #     label = np.asarray(label, dtype=np.int64)
+        if self.is_scale:
+            h, w = label.shape
+            if self.base_size:
+                if h > w:
+                    h, w = (self.base_size, int(self.base_size * w / h))
+                else:
+                    h, w = (int(self.base_size * h / w), self.base_size)
+            scale_factor = random.choice(self.scales)
+            h, w = (int(h * scale_factor), int(w * scale_factor))
+            image = cv2.resize(image, (w, h), interpolation=cv2.INTER_LINEAR)
+            label = Image.fromarray(label).resize((w, h), resample=Image.NEAREST)
+            label = np.asarray(label, dtype=np.int64)
 
         # Padding to fit for crop_size
         h, w = label.shape
@@ -85,7 +85,7 @@ class VOCDataset(torch.utils.data.Dataset):
         label = label[start_h:end_h, start_w:end_w]
         # print(bbox)
 
-        if self.split.__contains__('train') and self.is_flip:
+        if self.is_flip:
             # Random flipping
             if random.random() < 0.5:
                 image = np.fliplr(image).copy()  # HWC

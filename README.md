@@ -50,7 +50,7 @@ Finally, it should like this
         <td>-</td>
     </tr>
     <tr>
-        <td>Ours</td>
+        <td>Ours-step</td>
         <td>90.20</td>
         <td>80.92</td>
         <td><strong>62.34</td>
@@ -65,7 +65,7 @@ Finally, it should like this
         <td>-</td>
     </tr>
     <tr>
-        <td>Ours</td>
+        <td>Ours-step</td>
         <td>92.23</td>
         <td>79.99</td>
         <td><strong>67.58</strong></td>
@@ -106,6 +106,13 @@ e.g. We use ImageNet-1000 to train a classification task for backbone DeepLab-La
         <td>85.00</td>
     </tr>
     <tr>
+        <td>Ours-poly2</td>
+        <td>91.35</td>
+        <td>81.61</td>
+        <td><strong>65.44</td>
+        <td>85.26</td>
+    </tr>
+    <tr>
         <td rowspan="2">&#10003;</td>
         <td>Ours-step</td>
         <td>92.23</td>
@@ -120,8 +127,15 @@ e.g. We use ImageNet-1000 to train a classification task for backbone DeepLab-La
         <td><strong>68.72</strong></td>
         <td>86.98</td>
     </tr>
+    <tr>
+        <td>Ours-poly2</td>
+        <td>92.89</td>
+        <td>80.39</td>
+        <td><strong>69.60</strong></td>
+        <td>87.35</td>
+    </tr>
 </table>
-e.g. The learning rate policy of "step" and "poly", mentioned by [deeplab v2](http://arxiv.org/pdf/1606.00915.pdf).
+e.g. The learning rate policy of "step" and "poly", mentioned by [deeplab v2](http://arxiv.org/pdf/1606.00915.pdf). Ours-poly2 means to add scale method to dataset augment.
 
 ## Usage
 ### Train
